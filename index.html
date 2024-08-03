@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      sizes="16x16 32x32"
+      href="favicon.ico"
+    />
+    <link rel="apple-touch-icon" sizes="any" href="apple-touch-icon.png" />
+    <link rel="icon" sizes="32x32" href="favicon-32.png" />
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta name="msapplication-TileImage" content="favicon-144.png" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" sizes="192x192" href="favicon-192.png" />
+    <!-- icons.JesseJesse.com -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>USB Update macOS</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 900px;
+                margin: auto;
+                padding: 20px;
+                background-color: #f4f7f8;
+                color: #333;
+            }
+            header {
+                background-image: url('./sync.jpeg');
+                background-size: cover;
+                background-position: center;
+                padding: 50px 0;
+                text-align: center;
+                color: white;
+                font-size: 2em;
+            }
+            h1, h2 {
+                color: #2c3e50;
+                margin-bottom: 10px;
+            }
+            h1 {
+                font-size: 2em;
+                border-bottom: 2px solid #3498db;
+                padding-bottom: 10px;
+            }
+            h2 {
+                font-size: 1.5em;
+                border-bottom: 1px solid #bdc3c7;
+                padding-bottom: 5px;
+                margin-top: 20px;
+            }
+            p, ul {
+                font-size: 1em;
+                line-height: 1.6;
+                margin-bottom: 15px;
+            }
+            code {
+                background-color: #ecf0f1;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-family: 'Courier New', Courier, monospace;
+            }
+            pre {
+                background-color: #ecf0f1;
+                padding: 15px;
+                border-radius: 4px;
+                overflow-x: auto;
+                white-space: pre-wrap;
+                font-family: 'Courier New', Courier, monospace;
+            }
+            a {
+                color: #3498db;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            .download-link, .update-link, .make-usb-link {
+                display: inline-block;
+                margin: 20px 10px 20px 0;
+                padding: 12px 20px;
+                background-color: #3498db;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+            .download-link:hover, .update-link:hover, .make-usb-link:hover {
+                background-color: #2980b9;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            li {
+                margin-bottom: 10px;
+            }
+            footer {
+                margin-top: 40px;
+                padding: 20px;
+                text-align: center;
+                font-size: 0.9em;
+                color: #7f8c8d;
+                border-top: 1px solid #bdc3c7;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            Sync3 Update USB macOS
+        </header>
+        
+        <h2>Download the official update at ford.com</h2>
+        <p>Enter your VIN number&nbsp;<a href="https://www.ford.com/support/sync-maps-updates/" target="_blank">https://www.ford.com</a>&nbsp;and download the update file for your vehicle.<br>
+        To keep things easy, rename your download to <code>update.zip</code></p>
+
+        <h2>Step 1: USB Setup</h2>
+        <p>Open Terminal and list the available disks using the <code>diskutil list</code> command to identify the correct device identifier for your USB drive.</p>
+        <pre><code>diskutil list</code></pre>
+
+        <h2>Step 2: Format USB to exFAT</h2>
+        <p>Replace <code>/dev/disk2</code> with the correct device identifier obtained from the previous step.</p>
+        <pre><code>diskutil eraseDisk ExFAT MyUSB /dev/disk2</code></pre>
+
+        <h2>Step 3: Mount USB Drive</h2>
+        <p>Mount the USB drive. Replace <code>/dev/disk2s1</code> with the correct partition identifier.</p>
+        <pre><code>diskutil mount /dev/disk2s1</code></pre>
+
+        <h2>Step 4: Copy Zip File to USB Drive</h2>
+        <p>Copy the <code>update.zip</code> file to the USB drive. Ensure the path to the zip file is correct. <code>/Volumes/MyUSB</code> is an example mount point.</p>
+        <pre><code>cp ~/update.zip /Volumes/MyUSB</code></pre>
+
+        <h2>Step 5: Unzip Contents to USB Drive</h2>
+        <p>Unzip the contents of the zip file to the USB drive.</p>
+        <pre><code>unzip /Volumes/MyUSB/update.zip -d /Volumes/MyUSB</code></pre>
+
+        <h2>Step 6: Eject USB Drive</h2>
+        <p>Finally, eject the USB drive.</p>
+        <pre><code>diskutil eject /dev/disk2</code></pre>
+        
+        <h2>Insert the USB and Sync3 will automatically update</h2>
+        
+        <p>Click the link below to download version <code>3.4.23188</code></p>
+        <a href="https://ivsu.binaries.ford.com/owner-package/10327501967/NU5T-14G381-AD.zip" class="update-link" download="NU5T-14G381-AD.zip">sync 3.4</a>
+        <a href="script.html" class="make-usb-link">USB tool</a>
+        <h2>Terminal Commands</h2>
+        <ul>
+            <li><code>diskutil list</code> - List all disks and their partitions.</li>
+            <li><code>diskutil eraseDisk ExFAT MyUSB /dev/disk2</code> - Format the disk to ExFAT. Replace <code>/dev/disk2</code> with the correct disk identifier.</li>
+            <li><code>diskutil mount /dev/disk2s1</code> - Mount the USB drive. Replace <code>/dev/disk2s1</code> with the correct partition identifier.</li>
+            <li><code>cp ~/update.zip /Volumes/MyUSB</code> - Copy the update.zip file to the USB drive. Adjust the path if necessary.</li>
+            <li><code>unzip /Volumes/MyUSB/update.zip -d /Volumes/MyUSB</code> - Unzip the contents to the USB drive.</li>
+            <li><code>diskutil eject /dev/disk2</code> - Eject the USB drive.</li>
+        </ul>
+
+        <footer>
+            &copy;2024 Sync3 Update Guide by Sudo-Self. <br> <a href="https://sync3.JesseJesse.com">sync3.JesseJesse.com</a>
+        </footer>
+    </body>
+    </html>

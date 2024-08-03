@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      sizes="16x16 32x32"
+      href="favicon.ico"
+    />
+    <link rel="apple-touch-icon" sizes="any" href="apple-touch-icon.png" />
+    <link rel="icon" sizes="32x32" href="favicon-32.png" />
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta name="msapplication-TileImage" content="favicon-144.png" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" sizes="192x192" href="favicon-192.png" />
+    <!-- icons.JesseJesse.com -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>USB Update macOS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background-color: #f4f7f8;
+            color: #333;
+        }
+        header {
+            background-image: url('./sync.jpeg');
+            background-size: cover;
+            background-position: center;
+            padding: 40px 20px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+        }
+        h1, h2 {
+            color: #000;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 2em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.5em;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .download-link {
+            display: inline-block;
+            margin: 20px 10px 20px 0;
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .download-link:hover {
+            background-color: #2980b9;
+        }
+        .back-button {
+            display: inline-block;
+            margin: 20px 10px;
+            padding: 12px 20px;
+            background-color: #7f8c8d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .back-button:hover {
+            background-color: #95a5a6;
+        }
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            border-top: 1px solid #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sync3 USB macOS</h1>
+    </header>
+    
+    <h2>Enter Details to Generate Script</h2>
+    <form id="usb-form">
+        <label for="usb-device">USB Device Identifier:</label>
+        <input type="text" id="usb-device" name="usb-device" placeholder="/dev/disk2" required>
+            
+        <label for="usb-partition">USB Partition Identifier:</label>
+        <input type="text" id="usb-partition" name="usb-partition" placeholder="/dev/disk2s1" required>
+                
+        <label for="usb-mount-point">USB Mount Point:</label>
+        <input type="text" id="usb-mount-point" name="usb-mount-point" placeholder="/Volumes/MyUSB" required>
+                    
+        <label for="zip-file-path">Path to the Zip File:</label>
+        <input type="text" id="zip-file-path" name="zip-file-path" placeholder="/Users/username/update.zip" required>
+                        
+        <button type="button" onclick="generateScript()">Generate Script</button>
+    </form>
+    
+    <a id="download-link" class="download-link" style="display: none;">Download Script</a>
+    <a href="index.html" class="back-button">Back</a>
+    
+    <script>
+        function generateScript() {
+            const usbDevice = document.getElementById('usb-device').value;
+            const usbPartition = document.getElementById('usb-partition').value;
+            const usbMountPoint = document.getElementById('usb-mount-point').value;
+            const zipFilePath = document.getElementById('zip-file-path').value;
+            
+            const scriptContent = `#!/bin/bash
+
+# Variables
+USB_DEVICE="${usbDevice}"
+USB_PARTITION="${usbPartition}"
+USB_MOUNT_POINT="${usbMountPoint}"
+ZIP_FILE_PATH="${zipFilePath}"
+
+# List disks
+echo "Listing disks..."
+diskutil list
+
+# Erase the disk and format it as exFAT
+echo "Formatting USB drive to exFAT..."
+diskutil eraseDisk EXFAT MyUSB $USB_DEVICE
+
+# Mount the USB drive (if not automatically mounted)
+echo "Mounting USB drive..."
+diskutil mount $USB_PARTITION
+
+# Copy the zip file to the USB drive
+echo "Copying zip file to USB drive..."
+cp $ZIP_FILE_PATH $USB_MOUNT_POINT
+
+# Unzip the contents to the root directory of the USB drive
+echo "Unzipping contents to USB drive..."
+unzip $USB_MOUNT_POINT/$(basename $ZIP_FILE_PATH) -d $USB_MOUNT_POINT
+
+# Eject the USB drive
+echo "Ejecting USB drive..."
+diskutil eject $USB_DEVICE
+
+echo "Done!"
+`;
+
+            const blob = new Blob([scriptContent], { type: 'application/x-sh' });
+            const url = URL.createObjectURL(blob);
+            const downloadLink = document.getElementById('download-link');
+            downloadLink.href = url;
+            downloadLink.download = 'update_usb.sh';
+            downloadLink.style.display = 'inline-block';
+        }
+    </script>
+
+    <h2>Terminal Commands</h2>
+    <p>To make the script executable and run it, follow these steps:</p>
+    <pre><code>chmod +x update_usb.sh
+./update_usb.sh</code></pre>
+    <ul>
+        <li>Place the generated <code>update_usb.sh</code> file in the same directory as your update.zip file.</li>
+        <li>Run the script in the terminal using the commands above.</li>
+    </ul>
+
+    <footer>
+        &copy;2024 Sync3 Update Guide by Sudo-Self. <br> <a href="https://sync3.JesseJesse.com">sync3.JesseJesse.com</a>
+    </footer>
+</body>
+</html>
